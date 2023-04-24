@@ -1,0 +1,16 @@
+{
+  "family": "your-task-definition-family",
+  "containerDefinitions": [
+    {
+      "name": "webhookbot",
+      "image": "167737505636.dkr.ecr.us-east-1.amazonaws.com/webhookbot",
+      "essential": true,
+      "portMappings": [
+        {
+          "containerPort": 80,
+          "hostPort": 80
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,85 @@
+name: Test and Deploy
+
+on:
+  push:
+    branches:
+      - test
+
+jobs:
+  build_test_and_merge:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set image name variables
+      run: |
+        COMMIT_DATE=$(git show -s --format=%cd --date=short ${GITHUB_SHA})
+        TOTAL_COMMITS=$(git rev-list --count HEAD)
+        IMAGE_NAME="${COMMIT_DATE}-${TOTAL_COMMITS}"
+        echo "IMAGE_NAME=$IMAGE_NAME" >> $GITHUB_ENV
+
+    - name: Build Docker image
+      run: docker build -t $IMAGE_NAME .
+
+    - name: Create and run container from image
+      run: |
+        docker create --name test-container $IMAGE_NAME
+        docker start test-container
+        docker logs test-container
+
+    - name: Run tests inside the container
+      run: |
+        TEST_RESULT=$(docker exec test-container npm test)
+        if [ "$TEST_RESULT" != "0" ]; then
+          echo "test fail"
+          exit 1
+        fi
+
+    - name: Merge to main
+      if: success()
+      run: |
+        git config user.name "GitHub Actions"
+        git config user.email "actions@github.com"
+        git checkout main
+        git merge --no-ff test
+        git push origin main
+
+  deploy:
+    needs: build_test_and_merge
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Login to Amazon ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v1
+
+    - name: Build and push Docker image
+      run: |
+        COMMIT_DATE=$(git show -s --format=%cd --date=short ${GITHUB_SHA})
+        TOTAL_COMMITS=$(git rev-list --count HEAD)
+        IMAGE_NAME="${COMMIT_DATE}-${TOTAL_COMMITS}"
+        ECR_REPOSITORY=${{ steps.login-ecr.outputs.registry }}/your-repo-name
+        docker build -t $ECR_REPOSITORY:$IMAGE_NAME .
+        docker push $ECR_REPOSITORY:$IMAGE_NAME
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: us-east-1
+
+    - name: Register new task definition and update ECS service
+      run: |
+        COMMIT_DATE=$(git show -s --format=%cd --date=short ${GITHUB_SHA})
+        TOTAL_COMMITS=$(git rev-list --count HEAD)
+        IMAGE_NAME="${COMMIT_DATE}-${TOTAL_COMMITS}"
+        ECR_REPOSITORY=${{ steps.login-ecr.outputs.registry }}/your-repo-name
+        sed -i "s|your-ecr-repository-url|$ECR_REPOSITORY:$IMAGE_NAME|" task-definition.json
+        aws ecs register-task-definition --cli-input-json file://task-definition.json
+        aws ecs update-service --cluster webhookbot --service webhookbot --task-definition webhookbot --force-new-deployment

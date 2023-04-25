@@ -4,7 +4,6 @@
   "description": "A simple Discord bot",
   "main": "webhookbot.js",
   "scripts": {
-    "test": "jest"
     "start": "node webhookbot.js"
   },
   "dependencies": {

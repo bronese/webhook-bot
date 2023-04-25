@@ -43,7 +43,7 @@ jobs:
 
     - name: Create and run container from image
       run: |
-        docker create --name test-container $IMAGE_NAME"${TAG}
+        docker create --name test-container bronese/webhook-bot:${TAG}
         docker start test-container
         docker logs test-container
 

@@ -101,6 +101,6 @@ jobs:
         TOTAL_COMMITS=$(git rev-list --count HEAD)
         IMAGE_NAME="${COMMIT_DATE}-${TOTAL_COMMITS}"
         ECR_REPOSITORY=${{ steps.login-ecr.outputs.registry }}/webhookbot
-        sed -i "s|your-ecr-repository-url|$ECR_REPOSITORY:$IMAGE_NAME|" /workflows/task-definition.json
+        sed -i "s|your-ecr-repository-url|$ECR_REPOSITORY:$IMAGE_NAME|" https://github.com/bronese/webhook-bot/workflows/task-definition.json
         aws ecs register-task-definition --cli-input-json file://workflows/task-definition.json
         aws ecs update-service --cluster webhookbot --service webhookbot --task-definition webhookbot --force-new-deployment

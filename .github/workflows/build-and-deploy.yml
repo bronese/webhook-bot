@@ -21,10 +21,15 @@ jobs:
 
     - name: Set image name variables
       run: |
+        COMMIT_DATE=$(git show -s --format=%cd --date=short ${GITHUB_SHA})
+        TOTAL_COMMITS=$(git rev-list --count HEAD)
+        IMAGE_NAME="${COMMIT_DATE}_${TOTAL_COMMITS}"
+        TAG=$(git rev-parse --short=4 ${GITHUB_SHA})
+        
         echo "COMMIT_DATE=$(git show -s --format=%cd --date=short ${GITHUB_SHA})" 
         echo "TOTAL_COMMITS=$(git rev-list --count HEAD)"
         echo "IMAGE_NAME=${COMMIT_DATE}_${TOTAL_COMMITS}" >> $GITHUB_ENV
-        echo "TAG=${COMMIT_DATE}${TOTAL_COMMITS}" >> $GITHUB_ENV
+        echo "TAG=$(git rev-parse --short=4 ${GITHUB_SHA})" >> $GITHUB_ENV
 
     - name: Build Docker image and push to Docker Hub
       run: |

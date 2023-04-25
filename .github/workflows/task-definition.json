@@ -1,6 +1,7 @@
 {
   "family": "webhookbot",
   "networkMode": "awsvpc",
+  "executionRoleArn": "arn:aws:iam::167737505636:role/webhookbot",
   "containerDefinitions": [
     {
       "name": "webhookbot",

@@ -1,5 +1,5 @@
 {
-  "name": "my-discord-bot",
+  "name": "webhookbot",
   "version": "1.0.0",
   "description": "A simple Discord bot",
   "main": "webhookbot.js",
@@ -7,6 +7,6 @@
     "start": "node webhookbot.js"
   },
   "dependencies": {
-    "discord.js": "^12.5.3"
+    "discord.js": "^14.9.0"
   }
 }

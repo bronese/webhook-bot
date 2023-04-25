@@ -84,6 +84,7 @@ jobs:
       uses: aws-actions/amazon-ecr-login@v1
       with:
           registry: 167737505636.dkr.ecr.us-east-1.amazonaws.com/webhookbot
+
     - name: Build and push Docker image
       run: |
         COMMIT_DATE=$(git show -s --format=%cd --date=short ${GITHUB_SHA})
@@ -101,5 +102,5 @@ jobs:
         IMAGE_NAME="${COMMIT_DATE}-${TOTAL_COMMITS}"
         ECR_REPOSITORY=${{ steps.login-ecr.outputs.registry }}/webhookbot
         sed -i "s|your-ecr-repository-url|$ECR_REPOSITORY:$IMAGE_NAME|" task-definition.json
-        aws ecs register-task-definition --cli-input-json file://task-definition.json
+        aws ecs register-task-definition --cli-input-json file://workflows/task-definition.json
         aws ecs update-service --cluster webhookbot --service webhookbot --task-definition webhookbot --force-new-deployment

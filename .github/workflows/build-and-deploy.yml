@@ -85,7 +85,7 @@ jobs:
       with:
           registry: 167737505636.dkr.ecr.us-east-1.amazonaws.com/webhookbot
 
-    - name: Build and push Docker image
+    - name: Build and push Docker image # remove redundant ECR image push at some point
       run: |
         COMMIT_DATE=$(git show -s --format=%cd --date=short ${GITHUB_SHA})
         TOTAL_COMMITS=$(git rev-list --count HEAD)

@@ -2,9 +2,9 @@
   "name": "my-discord-bot",
   "version": "1.0.0",
   "description": "A simple Discord bot",
-  "main": "index.js",
+  "main": "webhookbot.js",
   "scripts": {
-    "start": "node index.js"
+    "start": "node webhookbot.js"
   },
   "dependencies": {
     "discord.js": "^12.5.3"

@@ -90,6 +90,8 @@ jobs:
         COMMIT_DATE=$(git show -s --format=%cd --date=short ${GITHUB_SHA})
         TOTAL_COMMITS=$(git rev-list --count HEAD)
         IMAGE_NAME="${COMMIT_DATE}-${TOTAL_COMMITS}"
+        TAG=$(git rev-parse --short=4 ${GITHUB_SHA})
+        echo "TAG=$(git rev-parse --short=4 ${GITHUB_SHA})" >> $GITHUB_ENV        
         ECR_REPOSITORY=${{ steps.login-ecr.outputs.registry }}/webhookbot
         docker build -t $ECR_REPOSITORY:$IMAGE_NAME .
         docker push $ECR_REPOSITORY:$IMAGE_NAME
@@ -107,10 +109,10 @@ jobs:
     - name: Deploy to ECS
       run: |
         aws ecs register-task-definition --cli-input-json file://.github/workflows/task-definition.json
-        SERVICE_EXISTS=$(aws ecs list-services --cluster your-ecs-cluster-name --query 'serviceArns[?ends_with(@, `your-service-name`)]' --output text)
+        SERVICE_EXISTS=$(aws ecs list-services --cluster webhookbot --query 'serviceArns[?ends_with(@, `webhookbot`)]' --output text)
         if [ -z "$SERVICE_EXISTS" ]; then
-          aws ecs create-service --cluster your-ecs-cluster-name --service-name your-service-name --task-definition your-task-definition-family --desired-count 1 --launch-type FARGATE --network-configuration "awsvpcConfiguration={subnets=[your-vpc-subnets]}"
+          aws ecs create-service --cluster webhookbot --service-name webhookbot --task-definition webhookbot --desired-count 1 --launch-type FARGATE --network-configuration "awsvpcConfiguration={subnets=[your-vpc-subnets]}"
         else
-          aws ecs update-service --cluster your-ecs-cluster-name --service your-service-name --task-definition your-task-definition-family
+          aws ecs update-service --cluster webhookbot --service webhookbot --task-definition webhookbot
         fi
-        aws ecs wait services-stable --cluster your-ecs-cluster-name --services your-service-name
+        aws ecs wait services-stable --cluster webhookbot --services webhookbot

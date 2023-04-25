@@ -29,8 +29,8 @@ jobs:
 
     - name: Build Docker image and push to Docker Hub
       run: |
-          docker tag $IMAGE_NAME bronese/webhook-bot:$TAG
-          docker push bronese/webhook-bot:$TAG
+          docker tag "$IMAGE_NAME" "bronese/webhook-bot:$TAG"
+          docker push "bronese/webhook-bot:$TAG"
 
 
     - name: Create and run container from image

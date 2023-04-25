@@ -94,12 +94,6 @@ jobs:
         docker build -t $ECR_REPOSITORY:$IMAGE_NAME .
         docker push $ECR_REPOSITORY:$IMAGE_NAME
 
-    - name: Install AWS CLI
-      run: |
-        curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-        unzip awscliv2.zip
-        sudo ./aws/install
-
     # - name: Register new task definition and update ECS service
     #   run: |
     #     COMMIT_DATE=$(git show -s --format=%cd --date=short ${GITHUB_SHA})

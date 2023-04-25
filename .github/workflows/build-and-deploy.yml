@@ -31,6 +31,10 @@ jobs:
         echo "IMAGE_NAME=${COMMIT_DATE}_${TOTAL_COMMITS}" >> $GITHUB_ENV
         echo "TAG=$(git rev-parse --short=4 ${GITHUB_SHA})" >> $GITHUB_ENV
 
+    - name: Build Docker image
+      run: |
+        docker build -t ${IMAGE_NAME}:${TAG} .
+
     - name: Build Docker image and push to Docker Hub
       run: |
         docker tag ${IMAGE_NAME} ${IMAGE_NAME}:${TAG}

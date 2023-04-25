@@ -1,0 +1,12 @@
+{
+  "name": "webhookbot",
+  "version": "1.0.0",
+  "description": "A simple Discord bot",
+  "main": "webhookbot.js",
+  "scripts": {
+    "start": "node webhookbot.js"
+  },
+  "dependencies": {
+    "discord.js": "^14.9.0"
+  }
+}

@@ -37,7 +37,8 @@ jobs:
 
     - name: Push image to Docker Hub
       run: |
-        docker push ${IMAGE_NAME}:${TAG}
+        docker tag ${IMAGE_NAME}:{TAG} bronese/webhook-bot:${TAG}
+        docker push bronese/webhook-bot:${TAG}
 
 
     - name: Create and run container from image

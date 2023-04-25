@@ -1,5 +1,6 @@
 {
   "family": "webhookbot",
+  "networkMode": "awsvpc",
   "containerDefinitions": [
     {
       "name": "webhookbot",
@@ -15,5 +16,6 @@
         }
       ]
     }
-  ]
+  ],
+  "requiresCompatibilities": ["FARGATE"]
 }

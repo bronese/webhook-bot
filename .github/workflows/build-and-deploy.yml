@@ -111,7 +111,7 @@ jobs:
         aws ecs register-task-definition --cli-input-json file://.github/workflows/task-definition.json
         SERVICE_EXISTS=$(aws ecs list-services --cluster webhookbot --query 'serviceArns[?ends_with(@, `webhookbot`)]' --output text)
         if [ -z "$SERVICE_EXISTS" ]; then
-          aws ecs create-service --cluster webhookbot --service-name webhookbot --task-definition webhookbot --desired-count 1 --launch-type FARGATE --network-configuration "awsvpcConfiguration={subnets=[your-vpc-subnets]}"
+          aws ecs create-service --cluster webhookbot --service-name webhookbot --task-definition webhookbot --desired-count 1 --launch-type FARGATE --network-configuration "awsvpcConfiguration={subnets=[subnet-0d3bcd472fcfed0e2,	subnet-0ff42390bba7e5ef0]}"
         else
           aws ecs update-service --cluster webhookbot --service webhookbot --task-definition webhookbot
         fi

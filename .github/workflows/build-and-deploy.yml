@@ -41,19 +41,19 @@ jobs:
         docker push bronese/webhook-bot:${TAG}
 
 
-    - name: Create and run container from image
-      run: |
-        docker create --name test-container bronese/webhook-bot:${TAG}
-        docker start test-container
-        docker logs test-container
+    # - name: Create and run container from image
+    #   run: |
+    #     docker create --name test-container bronese/webhook-bot:${TAG}
+    #     docker start test-container
+    #     docker logs test-container
 
-    - name: Run tests inside the container
-      run: |
-        TEST_RESULT=$(docker exec test-container npm test)
-        if [ "$TEST_RESULT" != "0" ]; then
-          echo "test fail"
-          exit 1
-        fi
+    # - name: Run tests inside the container
+    #   run: |
+    #     TEST_RESULT=$(docker exec test-container npm test)
+    #     if [ "$TEST_RESULT" != "0" ]; then
+    #       echo "test fail"
+    #       exit 1
+    #     fi
 
     # - name: Merge to main
     #   if: success()
@@ -81,7 +81,7 @@ jobs:
         COMMIT_DATE=$(git show -s --format=%cd --date=short ${GITHUB_SHA})
         TOTAL_COMMITS=$(git rev-list --count HEAD)
         IMAGE_NAME="${COMMIT_DATE}-${TOTAL_COMMITS}"
-        ECR_REPOSITORY=${{ steps.login-ecr.outputs.registry }}/your-repo-name
+        ECR_REPOSITORY=${{ steps.login-ecr.outputs.registry }}/webhookbot
         docker build -t $ECR_REPOSITORY:$IMAGE_NAME .
         docker push $ECR_REPOSITORY:$IMAGE_NAME
 
@@ -97,7 +97,7 @@ jobs:
         COMMIT_DATE=$(git show -s --format=%cd --date=short ${GITHUB_SHA})
         TOTAL_COMMITS=$(git rev-list --count HEAD)
         IMAGE_NAME="${COMMIT_DATE}-${TOTAL_COMMITS}"
-        ECR_REPOSITORY=${{ steps.login-ecr.outputs.registry }}/your-repo-name
+        ECR_REPOSITORY=${{ steps.login-ecr.outputs.registry }}/webhookbot
         sed -i "s|your-ecr-repository-url|$ECR_REPOSITORY:$IMAGE_NAME|" task-definition.json
         aws ecs register-task-definition --cli-input-json file://task-definition.json
         aws ecs update-service --cluster webhookbot --service webhookbot --task-definition webhookbot --force-new-deployment

@@ -24,12 +24,12 @@ jobs:
         COMMIT_DATE=$(git show -s --format=%cd --date=short ${GITHUB_SHA})
         TOTAL_COMMITS=$(git rev-list --count HEAD)
         IMAGE_NAME="${COMMIT_DATE}-${TOTAL_COMMITS}"
-        echo "IMAGE_NAME=$IMAGE_NAME" >> $GITHUB_ENV
+        TAG="${COMMIT_DATE}${TOTAL_COMMITS}"
+        echo "IMAGE_NAME=$IMAGE_NAME" >> $GITHUB_ENV, TAG_NAME=$TAG
 
     - name: Build Docker image and push to Docker Hub
       run: |
-          docker build -t $IMAGE_NAME .
-          docker tag $IMAGE_ID $DOCKER_HUB_REPO:$TAG
+          docker tag $IMAGE_ID bronese/webhook-bot:$TAG
           docker push $DOCKER_HUB_REPO:$TAG
 
 

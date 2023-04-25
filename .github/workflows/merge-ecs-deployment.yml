@@ -19,7 +19,7 @@ jobs:
           password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
 
       - name: Pull Docker image
-        run: docker pull $(docker images --format "{{.ID}}" --sort=date bronese/webhook-bot | head -n 1)
+        run: docker images --format '{{.Digest}}\t{{.Tag}}' bronese/webhook-bot:$ | sort -k2 -r | head -n1 | awk '{print $1}' | xargs docker pull bronese/webhook-bot:@
 
 
       - name: Configure AWS credentials

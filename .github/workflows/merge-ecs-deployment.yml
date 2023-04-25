@@ -28,7 +28,7 @@ jobs:
           DOCKER_HUB_USERNAME: ${{ secrets.DOCKER_USERNAME }}
           DOCKER_HUB_PASSWORD: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
         run: |
-          TOKEN=$(curl -s -H "Content-Type: application/json" -X POST -d '{"username": "'${DOCKER_HUB_USERNAME}'", "password": "'${DOCKER_HUB_PASSWORD'}"}' https://hub.docker.com/v2/users/login/ | jq -r .token)
+          tOKEN=$(curl -s -H "Content-Type: application/json" -X POST -d '{"username": "'${DOCKER_HUB_USERNAME}'", "password": "'${DOCKER_HUB_PASSWORD'}"}' https://hub.docker.com/v2/users/login/ | jq -r .token)
           TAG=$(curl -s -H "Authorization: JWT ${TOKEN}" https://hub.docker.com/v2/repositories/bronese/webhook-bot/tags/ | jq -r '.results | sort_by(.last_updated) | reverse | .[].name')
           MOST_RECENT_TAG=$(echo "${TAGS}" | head -n 1)
           echo "MOST_RECENT_TAG=${MOST_RECENT_TAG}" >> $GITHUB_ENV
